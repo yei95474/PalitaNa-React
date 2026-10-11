@@ -1,6 +1,6 @@
 import { useSearchParams, Link } from 'react-router-dom';
-import { useState } from 'react';
-import PRODUCTS from '../data/products';
+import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabase.js';
 import ProductCard from '../components/ProductCard';
 import SortBar from '../components/SortBar';
 
@@ -8,10 +8,27 @@ function SearchResultsPage() {
     const [searchParams] = useSearchParams();
     const term = searchParams.get("q") || "";
     const [sortOption, setSortOption] = useState("latest");
+    const [products, setProducts] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [loadError, setLoadError] = useState("");
+
+    useEffect(() => {
+        async function fetchProducts() {
+            setIsLoading(true);
+            const { data, error } = await supabase.from("products").select("*");
+            if (error) {
+                setLoadError(error.message);
+            } else {
+                setProducts(data);
+            }
+            setIsLoading(false);
+        }
+        fetchProducts();
+    }, []);
 
     const results = term === ""
         ? []
-        : PRODUCTS.filter((product) =>
+        : products.filter((product) =>
             product.name.toLowerCase().includes(term.toLowerCase())
         );
 
@@ -34,6 +51,8 @@ function SearchResultsPage() {
                     </section>
                     <SortBar sortOption={sortOption} onSelect={setSortOption} />
                 </div>
+                {isLoading && <p>Loading products...</p>}
+                {loadError && <p>Could not load products: {loadError}</p>}
                 <section className="product-listings-container">
                     <div className="product-card-grid">
                         {sortedResults.map((product) => (

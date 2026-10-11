@@ -1,9 +1,43 @@
 import { useParams, Link } from 'react-router-dom';
-import PRODUCTS from '../data/products';
+import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabase.js';
 
 function CheckoutPage() {
     const { id } = useParams();
-    const product = PRODUCTS.find((p) => p.id === Number(id));
+    const [product, setProduct] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [loadError, setLoadError] = useState("");
+
+    useEffect(() => {
+        async function fetchProduct() {
+            setIsLoading(true);
+            const { data, error } = await supabase
+                .from("products")
+                .select("*")
+                .eq("id", id)
+                .maybeSingle();
+            if (error) {
+                setLoadError(error.message);
+            } else {
+                setProduct(data);
+            }
+            setIsLoading(false);
+        }
+        fetchProduct();
+    }, [id]);
+
+    if (isLoading) {
+        return <main><p>Loading product...</p></main>;
+    }
+
+    if (loadError) {
+        return (
+            <main>
+                <p>Could not load product: {loadError}</p>
+                <Link to="/">Go back home</Link>
+            </main>
+        );
+    }
 
     if (!product) {
         return (

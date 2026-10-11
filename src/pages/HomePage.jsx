@@ -2,7 +2,8 @@ import Categories from '../components/Categories.jsx';
 import FiltersSidebar from '../components/FiltersSidebar.jsx';
 import ProductCard from '../components/ProductCard';
 import SortBar from '../components/SortBar';
-import PRODUCTS from '../data/products';
+import { supabase } from '../lib/supabase.js';
+import { useEffect } from 'react';
 import { useState } from 'react';
 
 const PAGE_SIZE = 16;
@@ -14,6 +15,10 @@ function toggleInList(list, value) {
 }
 
 function HomePage() {
+    const [products, setProducts] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [loadError, setLoadError] = useState("");
+
     const [sortOption, setSortOption] = useState("latest");
     const [selectedLocations, setSelectedLocations] = useState([]);
     const [selectedConditions, setSelectedConditions] = useState([]);
@@ -21,6 +26,21 @@ function HomePage() {
     const [maxPrice, setMaxPrice] = useState("");
     const [appliedPrice, setAppliedPrice] = useState({ min: "", max: "" });
     const [currentPage, setCurrentPage] = useState(1);
+
+    useEffect(() => {
+        async function fetchProducts() {
+            setIsLoading(true);
+            const { data, error } = await supabase.from("products").select("*");
+            if (error) {
+                setLoadError(error.message);
+            } else {
+                setProducts(data);
+            }
+            setIsLoading(false);
+        }
+        fetchProducts();
+    }, []);
+
     const handleToggleLocation = (location) => {
         setSelectedLocations(toggleInList(selectedLocations, location));
     };
@@ -41,7 +61,7 @@ function HomePage() {
         setAppliedPrice({ min: "", max: "" });
     };
 
-    const filteredProducts = PRODUCTS.filter((product) => {
+    const filteredProducts = products.filter((product) => {
         const matchesLocation =
             selectedLocations.length === 0 || selectedLocations.includes(product.location);
         const matchesCondition =
@@ -53,7 +73,7 @@ function HomePage() {
 
     let sortedProducts = [...filteredProducts];
     if (sortOption === "latest") {
-        sortedProducts.sort((a, b) => new Date(a.date) - new Date(b.date));
+        sortedProducts.sort((a, b) => new Date(b.date) - new Date(a.date));
     } else if (sortOption === "low") {
         sortedProducts.sort((a, b) => a.price - b.price);
     } else if (sortOption === "high") {
@@ -90,7 +110,8 @@ function HomePage() {
                             </section>
                             <SortBar sortOption={sortOption} onSelect={setSortOption} />
                         </div>
-
+                        {isLoading && <p>Loading products...</p>}
+                        {loadError && <p>Could not load products: {loadError}</p>}
                         <section className="product-listings-container">
                             <div className="product-card-grid">
                                 {pageProducts.map((product) => (
