@@ -10,7 +10,7 @@ function Navbar() {
             <ul className="navbar-right">
                 <li><Link to="/page-under-development">FEEDBACK</Link></li>
                 <li><Link to="/page-under-development">NOTIFICATIONS</Link></li>
-                <li>LOGIN | SIGN-UP</li>
+                <li><Link to="/login">LOGIN | SIGN-UP</Link></li>
             </ul>
         </nav>
     );
