@@ -33,8 +33,8 @@
 }
 
 .header-with-search-wrapper {
-  background-color: var(--color-bg-app);
-  box-shadow: 0 0 0 100vw var(--color-bg-app);
+  background-color: var(--color-card);
+  box-shadow: 0 0 0 100vw var(--color-card);
   clip-path: inset(0 -100vw);
   padding: 10px;
 }
@@ -185,12 +185,17 @@
 .content-wrapper {
   max-width: 1200px;
   margin: 0 auto;
+  margin-top: 24px;
   display: flex;
   gap: 16px;
 
   main {
     flex: 1;
   }
+}
+
+.content-wrapper .main-content-container {
+  margin-top: 0;
 }
 
 /* Aside */
@@ -574,6 +579,7 @@
 .main-content-container {
   max-width: 1200px;
   margin: 0 auto;
+  margin-top: 24px;
   margin-bottom: 48px;
 
 }

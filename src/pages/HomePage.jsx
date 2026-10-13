@@ -106,7 +106,7 @@ function HomePage() {
                         <div className="main-content-header-wrapper">
                             <section className="verified-viscan-listings-header-wrapper">
                                 <h3>Verified Viscan Listings</h3>
-                                <span>Show Campus n Campus Finds</span>
+                                <span>Showing {sortedProducts.length} Campus Finds</span>
                             </section>
                             <SortBar sortOption={sortOption} onSelect={setSortOption} />
                         </div>
