@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage.jsx';
 import PageUnderDevelopment from './pages/PageUnderDevelopment.jsx';
 import CheckoutPage from './pages/CheckoutPage.jsx';
 import SearchResultsPage from './pages/SearchResultsPage.jsx';
+import LoginPage from './pages/LoginPage.jsx';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/search" element={<SearchResultsPage />} />
         <Route path="/page-under-development" element={<PageUnderDevelopment />} />
         <Route path="/checkout/:id" element={<CheckoutPage />} />
+        <Route path="/login" element={<LoginPage />} />
       </Route>
     </Routes>
   );
