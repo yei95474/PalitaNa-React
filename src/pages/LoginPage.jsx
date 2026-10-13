@@ -74,7 +74,7 @@ function LoginPage() {
 
     return (
         <main>
-            <section className="main-content-container login-page-container">
+            <section className={`main-content-container login-page-container ${isSignUp ? 'signup-mode' : 'login-mode'}`}>
                 <div className="auth-tabs">
                     <button
                         type="button"
@@ -125,7 +125,7 @@ function LoginPage() {
                             type="email"
                             id="email"
                             placeholder={
-                                isSignUp ? 'Enter your @ulis.edu.ph email' : 'Enter your email'
+                                isSignUp ? 'Enter your email | @vsu.edu.ph' : 'Enter your email'
                             }
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
