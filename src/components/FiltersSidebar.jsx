@@ -1,7 +1,11 @@
+import useIsMobile from '../hooks/useIsMobile';
+
 const LOCATIONS = ["Brgy. Kilim", "Brgy. Pangasugan", "Inside VSU", "Brgy. Patag", "Brgy. Gabas", "Brgy. Utod", "Baybay City Proper"];
 const CONDITIONS = ["Brand New (Sealed)", "Like New", "Good Condition", "Pre-loved", "Damaged"];
 
 function FiltersSidebar({ selectedLocations, selectedConditions, onToggleLocation, onToggleCondition, onClearAll, minPrice, maxPrice, onMinPriceChange, onMaxPriceChange, onApplyPrice }) {
+    const isMobile = useIsMobile();
+
     return (
         <aside className="refine-finds-container">
             <section className="refine-finds-container-wrapper">
@@ -14,7 +18,9 @@ function FiltersSidebar({ selectedLocations, selectedConditions, onToggleLocatio
                     </div>
                     <button type="button" className="clear-filters-btn" onClick={onClearAll}>Clear All</button>
                 </div>
-                <form>
+                <details className="refine-finds-details" open={!isMobile}>
+                    <summary>Filter Options</summary>
+                    <form>
                     <fieldset className="refine-finds-location-fieldset">
                         <legend>LOCATION</legend>
                         {LOCATIONS.map((name) => (
@@ -64,7 +70,8 @@ function FiltersSidebar({ selectedLocations, selectedConditions, onToggleLocatio
                             </label>
                         ))}
                     </fieldset>
-                </form>
+                    </form>
+                </details>
             </section>
         </aside>
     );
