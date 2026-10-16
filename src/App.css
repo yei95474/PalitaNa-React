@@ -1070,14 +1070,32 @@
   padding: 6px 0;
 }
 
-.layout-mobile .main-content-header-wrapper,
-.layout-mobile .sort-bar-wrapper {
+.layout-mobile .main-content-header-wrapper {
   flex-wrap: wrap;
   gap: 8px;
 }
 
+.layout-mobile .verified-viscan-listings-header-wrapper {
+  h3 {
+    white-space: nowrap;
+    font-size: 15px;
+  }
+
+  span {
+    white-space: nowrap;
+    font-size: 11px;
+  }
+}
+
+.layout-mobile .sort-bar-wrapper {
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 13px;
+}
+
 .layout-mobile .sort-option-btn {
-  padding: 8px 10px;
+  padding: 6px 8px;
+  font-size: 13px;
 }
 
 .layout-mobile .product-card-grid {
