@@ -1,0 +1,2 @@
+export const LOCATIONS = ["Brgy. Kilim", "Brgy. Pangasugan", "Inside VSU", "Brgy. Patag", "Brgy. Gabas", "Brgy. Utod", "Baybay City Proper"];
+export const CONDITIONS = ["Brand New (Sealed)", "Like New", "Good Condition", "Pre-loved", "Damaged"];

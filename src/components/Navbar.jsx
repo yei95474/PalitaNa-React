@@ -7,7 +7,7 @@ function Navbar() {
         <nav className="navbar-container">
             <ul className="navbar-left">
                 <li className="navbar-mobile-hide"><Link to="/page-under-development">ABOUT</Link></li>
-                <li className="navbar-mobile-hide"><Link to="/page-under-development">LIST AN ITEM</Link></li>
+                <li className="navbar-mobile-hide"><Link to="/list-an-item">LIST AN ITEM</Link></li>
                 <li className="navbar-mobile-only"><Link to="/">HOME</Link></li>
             </ul>
             <ul className="navbar-right">

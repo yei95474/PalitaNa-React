@@ -7,6 +7,7 @@ import PageUnderDevelopment from './pages/PageUnderDevelopment.jsx';
 import CheckoutPage from './pages/CheckoutPage.jsx';
 import SearchResultsPage from './pages/SearchResultsPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
+import ListAnItemPage from './pages/ListAnItemPage.jsx';
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           <Route path="/page-under-development" element={<PageUnderDevelopment />} />
           <Route path="/checkout/:id" element={<CheckoutPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/list-an-item" element={<ListAnItemPage />} />
         </Route>
       </Routes>
     </AuthProvider>
