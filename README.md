@@ -9,7 +9,7 @@
 - **React** + **Vite** — UI and dev server
 - **React Router** — pages and navigation (`/`, `/search`, `/checkout/:id`)
 - **Plain CSS** — migrated from the legacy site (Tailwind planned)
-- **Supabase** — *in progress*: real database, auth, and listings
+- **Supabase** — live products database (PostgreSQL); auth & listings *in progress*
 
 ## Features
 
@@ -35,7 +35,7 @@ npm run build    # production build
 src/
   components/   # Navbar, SearchBar, FiltersSidebar, SortBar, ProductCard, ...
   pages/        # HomePage, SearchResultsPage, CheckoutPage, PageUnderDevelopment
-  data/         # products.js — seed data (to be replaced by Supabase)
+  lib/          # supabase.js — shared Supabase client
   App.jsx       # routes table
 ```
 
@@ -44,7 +44,7 @@ src/
 - [x] Static site port to React
 - [x] Interactive filters, sorting, pagination
 - [x] Search page
-- [ ] Supabase — products table, live data fetch
+- [x] Supabase — products table, live data fetch
 - [ ] User accounts and real listings ("List an Item")
 - [ ] Cart
 - [ ] Tailwind CSS migration

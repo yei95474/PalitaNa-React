@@ -1,7 +1,9 @@
-const LOCATIONS = ["Brgy. Kilim", "Brgy. Pangasugan", "Inside VSU", "Brgy. Patag", "Brgy. Gabas", "Brgy. Utod", "Baybay City Proper"];
-const CONDITIONS = ["Brand New (Sealed)", "Like New", "Good Condition", "Pre-loved", "Damaged"];
+import useIsMobile from '../hooks/useIsMobile';
+import { LOCATIONS, CONDITIONS } from '../constants.js';
 
 function FiltersSidebar({ selectedLocations, selectedConditions, onToggleLocation, onToggleCondition, onClearAll, minPrice, maxPrice, onMinPriceChange, onMaxPriceChange, onApplyPrice }) {
+    const isMobile = useIsMobile();
+
     return (
         <aside className="refine-finds-container">
             <section className="refine-finds-container-wrapper">
@@ -14,57 +16,60 @@ function FiltersSidebar({ selectedLocations, selectedConditions, onToggleLocatio
                     </div>
                     <button type="button" className="clear-filters-btn" onClick={onClearAll}>Clear All</button>
                 </div>
-                <form>
-                    <fieldset className="refine-finds-location-fieldset">
-                        <legend>LOCATION</legend>
-                        {LOCATIONS.map((name) => (
-                            <label key={name}>
-                                <input
-                                    type="checkbox"
-                                    checked={selectedLocations.includes(name)}
-                                    onChange={() => onToggleLocation(name)}
-                                />
-                                {name}
-                            </label>
-                        ))}
-                    </fieldset>
+                <details className="refine-finds-details" open={!isMobile}>
+                    <summary>Filter Options</summary>
+                    <form>
+                        <fieldset className="refine-finds-location-fieldset">
+                            <legend>LOCATION</legend>
+                            {LOCATIONS.map((name) => (
+                                <label key={name}>
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedLocations.includes(name)}
+                                        onChange={() => onToggleLocation(name)}
+                                    />
+                                    {name}
+                                </label>
+                            ))}
+                        </fieldset>
 
-                    <fieldset className="refine-finds-pricerange-fieldset">
-                        <legend>PRICE RANGE (₱)</legend>
-                        <div className="refine-finds-pricerange-fieldset-input-wrapper">
-                            <input
-                                type="number"
-                                placeholder="min"
-                                value={minPrice}
-                                onChange={(e) => onMinPriceChange(e.target.value)}
-                            />
-                            <span>-</span>
-                            <input
-                                type="number"
-                                placeholder="max"
-                                value={maxPrice}
-                                onChange={(e) => onMaxPriceChange(e.target.value)}
-                            />
-                        </div>
-                        <div className="refine-finds-pricerange-fieldset-applyfilter-wrapper">
-                            <button type="button" className="apply-filter-btn" onClick={onApplyPrice}>Apply Filter</button>
-                        </div>
-                    </fieldset>
-
-                    <fieldset className="refine-finds-itemcondition-fieldset">
-                        <legend>ITEM CONDITION</legend>
-                        {CONDITIONS.map((name) => (
-                            <label key={name}>
+                        <fieldset className="refine-finds-pricerange-fieldset">
+                            <legend>PRICE RANGE (₱)</legend>
+                            <div className="refine-finds-pricerange-fieldset-input-wrapper">
                                 <input
-                                    type="checkbox"
-                                    checked={selectedConditions.includes(name)}
-                                    onChange={() => onToggleCondition(name)}
+                                    type="number"
+                                    placeholder="min"
+                                    value={minPrice}
+                                    onChange={(e) => onMinPriceChange(e.target.value)}
                                 />
-                                {name}
-                            </label>
-                        ))}
-                    </fieldset>
-                </form>
+                                <span>-</span>
+                                <input
+                                    type="number"
+                                    placeholder="max"
+                                    value={maxPrice}
+                                    onChange={(e) => onMaxPriceChange(e.target.value)}
+                                />
+                            </div>
+                            <div className="refine-finds-pricerange-fieldset-applyfilter-wrapper">
+                                <button type="button" className="apply-filter-btn" onClick={onApplyPrice}>Apply Filter</button>
+                            </div>
+                        </fieldset>
+
+                        <fieldset className="refine-finds-itemcondition-fieldset">
+                            <legend>ITEM CONDITION</legend>
+                            {CONDITIONS.map((name) => (
+                                <label key={name}>
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedConditions.includes(name)}
+                                        onChange={() => onToggleCondition(name)}
+                                    />
+                                    {name}
+                                </label>
+                            ))}
+                        </fieldset>
+                    </form>
+                </details>
             </section>
         </aside>
     );
