@@ -1,142 +1,100 @@
-import { useState } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { useRef, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { CATEGORIES, CONDITIONS, LOCATIONS, listingPath } from '../constants.js';
 import { useAuth } from '../context/AuthContext.jsx';
-import { LOCATIONS, CONDITIONS } from '../constants.js';
+import { useMarketplace } from '../context/MarketplaceContext.jsx';
+import { saveListing } from '../lib/marketplace.js';
+import { saveListingPhoto } from '../lib/listingPhoto.js';
+import ListingPhotoField from '../components/ListingPhotoField.jsx';
 
-function ListAnItemPage() {
+function SelectField({ name, label, options, value }) {
+    return <div className="draft-field">
+        <label htmlFor={name}>{label}</label>
+        <select id={name} name={name} defaultValue={value} required>
+            <option value="" disabled>Choose {label.toLowerCase()}</option>
+            {options.map((option) => <option key={option}>{option}</option>)}
+        </select>
+    </div>;
+}
+
+function ListingForm({ original }) {
     const { user } = useAuth();
+    const { refresh } = useMarketplace();
     const navigate = useNavigate();
-
-    const [name, setName] = useState('');
-    const [price, setPrice] = useState('');
-    const [condition, setCondition] = useState(CONDITIONS[0]);
-    const [location, setLocation] = useState(LOCATIONS[0]);
-    const [image, setImage] = useState('');
+    const [busy, setBusy] = useState(false);
+    const [id] = useState(() => original?.id ?? crypto.randomUUID());
+    const [photo, setPhoto] = useState(null);
+    const [removed, setRemoved] = useState(false);
+    const [preparing, setPreparing] = useState(false);
+    const stagedPhoto = useRef(null);
     const [error, setError] = useState('');
-    const [submitting, setSubmitting] = useState(false);
 
-    if (!user) {
-        return <Navigate to="/login" replace />;
+    async function submit(event) {
+        event.preventDefault();
+        if (busy || preparing) return;
+        setError('');
+        const values = Object.fromEntries(new FormData(event.currentTarget));
+        const name = values.name.trim();
+        const description = values.description.trim();
+        if (!name || !description) { setError('Enter an item name and description.'); return; }
+
+        setBusy(true);
+        try {
+            if (photo && stagedPhoto.current?.file !== photo) {
+                const url = await saveListingPhoto(user.id, photo, id);
+                stagedPhoto.current = { file: photo, url };
+            }
+            const image = photo ? stagedPhoto.current.url : removed ? '' : original?.image ?? '';
+            const saved = await saveListing(user, {
+                ...values, name, description, image, price: Number(values.price),
+            }, id, Boolean(original));
+            refresh();
+            navigate(listingPath(saved.id));
+        } catch (problem) {
+            setError(problem.message);
+            setBusy(false);
+        }
     }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-
-        if (name.trim() === '') {
-            setError('Item name is required.');
-            return;
-        }
-
-        const priceNumber = Number(price);
-        if (price === '' || !Number.isInteger(priceNumber) || priceNumber < 0) {
-            setError('Price must be a whole number of pesos.');
-            return;
-        }
-
-        if (image.trim() === '') {
-            setError('Image link is required.');
-            return;
-        }
-
-        setSubmitting(true);
-
-        const { error: insertError } = await supabase.from('products').insert({
-            name: name.trim(),
-            price: priceNumber,
-            condition,
-            location,
-            image: image.trim(),
-            date: new Date().toISOString().slice(0, 10),
-            popularity: 0,
-            user_id: user.id,
-        });
-
-        setSubmitting(false);
-
-        if (insertError) {
-            setError(insertError.message);
-            return;
-        }
-
-        navigate('/');
-    };
-
     return (
-        <section className="main-content-container list-item-page-container">
-            <h2>List an Item</h2>
-            <p className="list-item-subtitle">Post a listing for the Viscan community.</p>
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="list-item-name">Item Name</label>
-                    <input
-                        id="list-item-name"
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="e.g. Scientific Calculator"
-                    />
+        <main className="draft-panel draft-form-panel">
+            <h1>{original ? 'Edit listing' : 'List an Item'}</h1>
+            <p className="draft-muted">Tell buyers what you’re selling and where they can pick it up.</p>
+            <form className="draft-form" onSubmit={submit}>
+                <label className="draft-field">Item name<input name="name" maxLength="100" required defaultValue={original?.name} placeholder="e.g. Scientific calculator" /></label>
+                <div className="draft-fields">
+                    <label className="draft-field">Price (₱)<input name="price" type="number" min="0" max="10000000" step="1" required defaultValue={original?.price} /></label>
+                    <SelectField label="Category" name="category" options={CATEGORIES} value={original?.category ?? ''} />
                 </div>
-
-                <div className="form-group">
-                    <label htmlFor="list-item-price">Price (₱)</label>
-                    <input
-                        id="list-item-price"
-                        type="number"
-                        min="0"
-                        step="1"
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
-                        placeholder="e.g. 250"
-                    />
+                <div className="draft-fields">
+                    <SelectField label="Condition" name="condition" options={CONDITIONS} value={original?.condition ?? ''} />
+                    <SelectField label="Pickup area" name="location" options={LOCATIONS} value={original?.location ?? ''} />
                 </div>
-
-                <div className="form-group">
-                    <label htmlFor="list-item-condition">Condition</label>
-                    <select
-                        id="list-item-condition"
-                        value={condition}
-                        onChange={(e) => setCondition(e.target.value)}
-                    >
-                        {CONDITIONS.map((option) => (
-                            <option key={option} value={option}>{option}</option>
-                        ))}
-                    </select>
+                <label className="draft-field">Description<textarea name="description" rows="4" maxLength="1600" required defaultValue={original?.description} /></label>
+                <ListingPhotoField busy={busy || preparing} existing={original?.image} photo={photo}
+                    removed={removed} onPreparing={setPreparing} onChange={setPhoto}
+                    onRemove={() => { setRemoved(true); setPhoto(null); }} />
+                <div className="draft-field"><label htmlFor="listing-status">Availability</label>
+                    <select id="listing-status" name="status" defaultValue={original?.status ?? 'available'}><option value="available">Available</option><option value="sold">Sold</option>{original && <option value="archived">Archived</option>}</select>
                 </div>
-
-                <div className="form-group">
-                    <label htmlFor="list-item-location">Location</label>
-                    <select
-                        id="list-item-location"
-                        value={location}
-                        onChange={(e) => setLocation(e.target.value)}
-                    >
-                        {LOCATIONS.map((option) => (
-                            <option key={option} value={option}>{option}</option>
-                        ))}
-                    </select>
+                {error && <p className="form-error" role="alert">{error}</p>}
+                <div className="draft-actions">
+                    <button className="draft-button" type="submit" disabled={busy || preparing}>{busy ? 'Saving…' : original ? 'Save changes' : 'Post listing'}</button>
+                    <Link className="text-link" to={original ? '/my-listings' : '/'}>Cancel</Link>
                 </div>
-
-                <div className="form-group">
-                    <label htmlFor="list-item-image">Image Link</label>
-                    <input
-                        id="list-item-image"
-                        type="text"
-                        value={image}
-                        onChange={(e) => setImage(e.target.value)}
-                        placeholder="https://..."
-                    />
-                </div>
-
-                {error && <p className="list-item-error">{error}</p>}
-
-                <button type="submit" className="list-item-submit-btn" disabled={submitting}>
-                    {submitting ? 'Posting...' : 'Post Listing'}
-                </button>
             </form>
-        </section>
+        </main>
     );
 }
 
-export default ListAnItemPage;
+export default function ListAnItemPage() {
+    const { user } = useAuth();
+    const { products, loading, error, refresh } = useMarketplace();
+    const { id } = useParams();
+    if (!id) return <ListingForm key="new" />;
+    if (loading) return <main className="draft-panel" role="status">Loading listing…</main>;
+    if (error) return <main className="draft-panel">Could not load your listing. <button onClick={refresh} className="text-link">Try again</button></main>;
+    const original = products.find((item) => item.id === id && item.user_id === user.id);
+    if (!original) return <main className="draft-panel"><h1>Listing unavailable</h1><Link className="text-link" to="/my-listings">My listings</Link></main>;
+    return <ListingForm key={id} original={original} />;
+}

@@ -28,6 +28,9 @@ dist-ssr
 *.sln
 *.sw?
 
-#opencode
+# Local agent configuration
 opencode.jsonc
 .opencode/*
+# Private credentials and demo builds
+secrets.local.txt
+dist-demo/

@@ -1,44 +1,34 @@
 import { Link } from 'react-router-dom';
 
-function Footer() {
+export default function Footer() {
     return (
         <footer className="footer-container">
             <div className="footer-content-wrapper">
                 <div className="footer-column">
-                    <nav className="footer-fieldset-wrapper">
-                        <fieldset className="footer-about-us-section">
-                            <legend>Palita-Na</legend>
-                            <Link to="/page-under-development">About Us</Link>
-                            <Link to="/page-under-development">Terms and Conditions</Link>
-                            <Link to="/page-under-development">Privacy Policy</Link>
-                            <Link to="/page-under-development">How it Works</Link>
+                    <nav className="footer-fieldset-wrapper" aria-label="Footer">
+                        <fieldset>
+                            <legend>PalitaNa</legend>
+                            <Link to="/about">About us</Link>
+                            <Link to="/how-it-works">How it works</Link>
                         </fieldset>
-                        <fieldset className="footer-contact-us-section">
-                            <legend>Contact Us</legend>
-                            <Link to="/page-under-development">Facebook</Link>
-                            <Link to="/page-under-development">Tiktok</Link>
-                            <Link to="/page-under-development">Instagram</Link>
-                            <Link to="/page-under-development">Email</Link>
+                        <fieldset>
+                            <legend>Marketplace</legend>
+                            <Link to="/">Browse listings</Link>
+                            <Link to="/list-an-item">List an item</Link>
                         </fieldset>
-                        <fieldset className="footer-shop-section">
-                            <legend>Shop</legend>
-                            <Link to="/page-under-development">Categories</Link>
-                            <Link to="/page-under-development">New Arrivals</Link>
-                            <Link to="/page-under-development">List an Item</Link>
+                        <fieldset>
+                            <legend>Information</legend>
+                            <Link to="/terms">Terms</Link>
+                            <Link to="/privacy">Privacy</Link>
                         </fieldset>
                     </nav>
                     <div className="footer-tagline-with-slogan-wrapper">
-                        <Link to="/"><img src="/images/PalitaNa LogoWithText.png" alt="Palita-Na-with-Tagline" /></Link>
-                        <p className="footer-slogan">0% Commission • 100% In-Person Safe Trades on VSU Campus.</p>
+                        <Link to="/"><img src="/images/PalitaNa LogoWithText.png" alt="PalitaNa home" /></Link>
+                        <p className="footer-slogan">0% commission · In-person trades around VSU.</p>
                     </div>
                 </div>
-                <section className="footer-legal-section">
-                    <p>© 2026 Palita-Na. All rights reserved.</p>
-                    <p>Developed by 73yel</p>
-                </section>
+                <div className="footer-legal-section"><p>© 2026 PalitaNa</p><p>Developed by 73yel</p></div>
             </div>
         </footer>
     );
 }
-
-export default Footer;
