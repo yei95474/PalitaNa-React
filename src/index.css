@@ -16,6 +16,10 @@
   --color-text-main: #0f172a;
   --color-text-muted: #64748b;
   --color-text-light: #ffffff;
+  --color-surface-muted: #f1f5f9;
+  --color-on-accent: #201009;
+  --radius-control: 0;
+  --font-body: 'Inter', sans-serif;
 
 }
 
@@ -26,7 +30,7 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
   background-color: var(--color-bg-app);
   color: var(--color-text-main);
   line-height: 1.5;

@@ -1,31 +1,23 @@
-const CATEGORIES = [
-    "Men's Apparel",
-    "Women's Apparel",
-    "Mobile & Gadgets",
-    "Gifts",
-    "Makeup & Fragrances",
-    "Hobbies & Stationery",
-    "Personal Care",
-    "Food",
-    "Groceries",
-    "Entertainment",
-    "Home & Living",
-    "Men's Accessories",
-    "Women's Accessories",
-    "Home Appliances",
-    "Toys & Collectibles",
-    "Pets & Grooming",
-];
+import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { CATEGORIES } from '../constants.js';
 
-function Categories() {
+export default function Categories({ selected }) {
+    const [expanded, setExpanded] = useState(false);
     return (
-        <section className="categories">
-            <ul>
-                {CATEGORIES.map((name) => (<li key={name}>{name}</li>))}
+        <nav className={'categories' + (expanded ? ' categories-expanded' : '')} aria-label="Categories">
+            <ul id="market-categories">
+                {CATEGORIES.map((name) => (
+                    <li key={name}>
+                        <Link aria-current={selected === name ? 'page' : undefined}
+                            to={selected === name ? '/' : '/search?category=' + encodeURIComponent(name)}>{name}</Link>
+                    </li>
+                ))}
             </ul>
-            <a href="#" className="view-all-categories">View All -&gt;</a>
-        </section>
+            <button type="button" className="view-all-categories" aria-expanded={expanded}
+                aria-controls="market-categories" onClick={() => setExpanded(!expanded)}>
+                {expanded ? 'Show less ↑' : 'View all →'}
+            </button>
+        </nav>
     );
 }
-
-export default Categories;

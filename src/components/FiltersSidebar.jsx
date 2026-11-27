@@ -1,9 +1,6 @@
-import useIsMobile from '../hooks/useIsMobile';
 import { LOCATIONS, CONDITIONS } from '../constants.js';
 
-function FiltersSidebar({ selectedLocations, selectedConditions, onToggleLocation, onToggleCondition, onClearAll, minPrice, maxPrice, onMinPriceChange, onMaxPriceChange, onApplyPrice }) {
-    const isMobile = useIsMobile();
-
+function FiltersSidebar({ selectedLocations, selectedConditions, onToggleLocation, onToggleCondition, onClearAll, minPrice, maxPrice, onMinPriceChange, onMaxPriceChange, onApplyPrice, priceError }) {
     return (
         <aside className="refine-finds-container">
             <section className="refine-finds-container-wrapper">
@@ -16,9 +13,8 @@ function FiltersSidebar({ selectedLocations, selectedConditions, onToggleLocatio
                     </div>
                     <button type="button" className="clear-filters-btn" onClick={onClearAll}>Clear All</button>
                 </div>
-                <details className="refine-finds-details" open={!isMobile}>
-                    <summary>Filter Options</summary>
-                    <form>
+                <div className="refine-finds-details">
+                    <form onSubmit={(event) => { event.preventDefault(); onApplyPrice(); }}>
                         <fieldset className="refine-finds-location-fieldset">
                             <legend>LOCATION</legend>
                             {LOCATIONS.map((name) => (
@@ -38,23 +34,24 @@ function FiltersSidebar({ selectedLocations, selectedConditions, onToggleLocatio
                             <div className="refine-finds-pricerange-fieldset-input-wrapper">
                                 <input
                                     type="number"
-                                    placeholder="min"
+                                    placeholder="min" aria-label="Minimum price" min="0"
                                     value={minPrice}
                                     onChange={(e) => onMinPriceChange(e.target.value)}
                                 />
                                 <span>-</span>
                                 <input
                                     type="number"
-                                    placeholder="max"
+                                    placeholder="max" aria-label="Maximum price" min="0"
                                     value={maxPrice}
                                     onChange={(e) => onMaxPriceChange(e.target.value)}
                                 />
                             </div>
                             <div className="refine-finds-pricerange-fieldset-applyfilter-wrapper">
-                                <button type="button" className="apply-filter-btn" onClick={onApplyPrice}>Apply Filter</button>
+                                <button type="submit" className="apply-filter-btn">Apply Filter</button>
                             </div>
                         </fieldset>
 
+                        {priceError && <p role="alert" className="form-error">{priceError}</p>}
                         <fieldset className="refine-finds-itemcondition-fieldset">
                             <legend>ITEM CONDITION</legend>
                             {CONDITIONS.map((name) => (
@@ -69,7 +66,7 @@ function FiltersSidebar({ selectedLocations, selectedConditions, onToggleLocatio
                             ))}
                         </fieldset>
                     </form>
-                </details>
+                </div>
             </section>
         </aside>
     );
